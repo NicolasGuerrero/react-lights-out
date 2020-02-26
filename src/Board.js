@@ -27,18 +27,31 @@ import "./Board.css";
  *
  **/
 
-function Board({ nrows, ncols, chanceLightStartsOn }) {
+function Board({ nrows = 2, ncols = 2, chanceLightStartsOn = 0.9 }) {
   const [board, setBoard] = useState(createBoard());
 
   /** create a board nrows high/ncols wide, each cell randomly lit or unlit */
   function createBoard() {
     let initialBoard = [];
     // TODO: create array-of-arrays of true/false values
+    for (let i = 0; i < nrows; i++) {
+      let boardRow = [];
+      for (let j = 0; j < ncols; j++) {
+        boardRow.push(Math.random() < chanceLightStartsOn);
+      }
+      initialBoard.push(boardRow);
+    }
     return initialBoard;
   }
 
   function hasWon() {
     // TODO: check the board in state to determine whether the player has won.
+    for (let i = 0; i < nrows; i++) {
+      if (board[i].includes(true)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   function flipCellsAround(coord) {
@@ -54,20 +67,42 @@ function Board({ nrows, ncols, chanceLightStartsOn }) {
       };
 
       // TODO: Make a (deep) copy of the oldBoard
+      const boardCopy = oldBoard.map(row => [...row]);
 
       // TODO: in the copy, flip this cell and the cells around it
-
+      flipCell(y, x, boardCopy);
+      flipCell(y + 1, x, boardCopy);
+      flipCell(y - 1, x, boardCopy);
+      flipCell(y, x + 1, boardCopy);
+      flipCell(y, x - 1, boardCopy);
       // TODO: return the copy
+
+      return boardCopy;
     });
   }
 
   // if the game is won, just show a winning msg & render nothing else
 
   // TODO
-
+  const win = <p>You Won!</p>;
   // make table board
-
   // TODO
+  const gameBoard = (
+  <table>{
+    board.map((row, y) => {
+      return (
+        <tr key={y}>
+          {row.map((cell, x) => {
+            const isLit = board[y][x];
+            const flipCellsAroundMe = evt => flipCellsAround(`${y}-${x}`);
+            return(<Cell flipCellsAroundMe={flipCellsAroundMe} isLit={isLit} key={x} />);
+          })}
+        </tr>
+      );
+    })}
+  </table>);
+
+  return (hasWon() ? win : gameBoard);
 }
 
 export default Board;
