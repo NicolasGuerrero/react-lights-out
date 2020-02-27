@@ -27,7 +27,7 @@ import "./Board.css";
  *
  **/
 
-function Board({ nrows = 2, ncols = 2, chanceLightStartsOn = 0.9 }) {
+function Board({ nrows = 4, ncols = 5, chanceLightStartsOn = .8 }) {
   const [board, setBoard] = useState(createBoard());
 
   /** create a board nrows high/ncols wide, each cell randomly lit or unlit */
@@ -88,19 +88,27 @@ function Board({ nrows = 2, ncols = 2, chanceLightStartsOn = 0.9 }) {
   // make table board
   // TODO
   const gameBoard = (
-  <table>{
-    board.map((row, y) => {
-      return (
-        <tr key={y}>
-          {row.map((cell, x) => {
-            const isLit = board[y][x];
-            const flipCellsAroundMe = evt => flipCellsAround(`${y}-${x}`);
-            return(<Cell flipCellsAroundMe={flipCellsAroundMe} isLit={isLit} key={x} />);
-          })}
-        </tr>
-      );
-    })}
-  </table>);
+    <table>
+      <tbody>{
+        board.map((row, y) => {
+          return (
+            <tr key={y}>
+              {row.map((cell, x) => {
+                const isLit = board[y][x];
+                const flipCellsAroundMe = evt => flipCellsAround(`${y}-${x}`);
+                return (
+                  <Cell
+                    flipCellsAroundMe={flipCellsAroundMe}
+                    isLit={isLit}
+                    key={x}
+                    coord={`${y}-${x}`} />
+                );
+              })}
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>);
 
   return (hasWon() ? win : gameBoard);
 }
